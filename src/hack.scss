@@ -1,0 +1,476 @@
+$global-primary-background: #1b60ab;
+@import "../node_modules/uikit/src/scss/variables-theme.scss";
+@import "../node_modules/uikit/src/scss/uikit-theme.scss";
+@import "../node_modules/mapbox-gl/dist/mapbox-gl.css";
+@import "../node_modules/@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+
+$button-colors: (
+  "danger": $button-danger-background,
+  "caution": #d6ba00,
+  "success": #118927,
+  "primary": $button-primary-background,
+);
+
+.uk-input,
+.uk-radio,
+.uk-select {
+  border: solid 1px #999;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // justify-content: center;
+  color: #444;
+  min-height: 100vh;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: #444;
+  margin: 0;
+}
+
+h5 {
+  padding-top: 1rem;
+  padding-bottom: 0.2rem;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.uk-margin {
+  .uk-button {
+    margin: 0px 0.2rem 0px 0.2rem;
+  }
+}
+.btn-menu {
+  border: solid 1px #aaa;
+  .uk-button-menu {
+    margin: 0px;
+    border-bottom: dashed 1px #bbb;
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.property-results {
+  width: 800px;
+}
+
+.wizard-header {
+  .uk-progress {
+    margin: 0;
+    background-color: #aaa;
+  }
+  width: 100%;
+  .header-options {
+    display: flex;
+    justify-content: space-between;
+    .progress-details {
+      padding: 1rem;
+    }
+    .buttons {
+      padding: 1rem;
+      display: flex;
+      justify-content: end;
+      .uk-button {
+        display: flex;
+        align-items: center;
+        .uk-icon {
+          margin-left: 0.4em;
+        }
+      }
+    }
+  }
+}
+
+.uk-button-collapse {
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  text-align: unset;
+  background-color: transparent;
+  color: $button-text-color;
+  &:hover {
+    color: $button-text-color;
+  }
+  span.uk-icon {
+    width: 20px;
+  }
+  padding: 0.2rem;
+  width: 100%;
+}
+
+.property-image,
+.ai-image {
+  height: 400px;
+  width: 400px;
+}
+
+.ai-image-layer {
+  position: absolute;
+  opacity: 0.8;
+  height: 400px;
+  width: 400px;
+}
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: #444;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.uk-card-default {
+  box-shadow: 0 5px 15px rgb(0 0 0 / 8%);
+}
+
+.ec-backdrop {
+  background-color: rgba(260, 260, 260, 0.6);
+  width: 500px;
+  height: 500px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ec-backdrop-fill {
+  background-color: rgba(260, 260, 260, 0.6);
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.ec-layer {
+  position: absolute;
+}
+
+.ec-stage {
+  &.disabled {
+    pointer-events: none;
+  }
+}
+
+.ec-artboard-stage {
+  border: solid 1px #aaa;
+  box-shadow: 0 5px 15px rgb(0 0 0 / 8%);
+  background-color: #eee;
+  &.disabled {
+    pointer-events: none;
+  }
+}
+
+.ec-map-container {
+  &.hidden {
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+  }
+}
+
+.ec-map {
+  height: 500px;
+  width: 500px;
+  &.hidden {
+    width: 500px;
+    height: 500px;
+    position: fixed;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  &.disabled {
+    pointer-events: none;
+  }
+}
+
+.uk-menu-input {
+  width: 40ch;
+  z-index: 200;
+  position: relative;
+}
+
+.uk-card-menu {
+  width: 40ch;
+  max-height: 20ch;
+  overflow-y: scroll;
+  position: absolute;
+  border: 1px #ccc solid;
+  box-shadow: 0px 0px 216px rgba(100, 100, 100, 0.2);
+}
+
+.uk-button {
+  svg {
+    width: 1.2em;
+    pointer-events: none;
+  }
+  &.active {
+    background-color: $global-primary-background;
+  }
+  &:hover {
+    background-color: rgba($button-primary-background, 0.3) !important;
+  }
+  border-left: 0px;
+  &-menu {
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: $button-text-color;
+    &:hover {
+      color: $button-text-color;
+    }
+  }
+  &-card {
+    box-shadow: 0 5px 5px rgb(0 0 0 / 9%);
+  }
+  &-outlined {
+    background: none;
+    box-shadow: 0px 0px 0px 2px $button-primary-background inset;
+    box-sizing: border-box;
+    color: $button-text-color;
+
+    @each $name, $color in $button-colors {
+      &.uk-button-#{$name} {
+        box-shadow: 0px 0px 0px 2px $color inset;
+        color: $color;
+        &:hover {
+          background-color: rgba($color, 0.3) !important;
+        }
+      }
+    }
+  }
+  &:disabled {
+    color: #aaa;
+    svg {
+      fill: #aaa;
+    }
+  }
+}
+
+.uk-button-bar {
+  &.vertical {
+    margin-top: 0.4rem;
+    flex-direction: column;
+    width: 12rem;
+    margin-right: 1em;
+    // overflow: hidden;
+    display: flex;
+    .uk-map-control-buttons {
+      .uk-button {
+        border-radius: 100%;
+        width: 50px;
+        height: 50px;
+      }
+    }
+    .uk-button {
+      box-shadow: 0px 0 2px 2px rgba(0, 0, 0, 0.1);
+      display: block;
+      padding: 0rem;
+      width: 12rem;
+      // border-radius: 100%;
+      height: 4rem;
+      // border: 1px solid #333;
+      text-align: left;
+      margin-bottom: 0.4rem;
+
+      span {
+        font-size: 1em;
+      }
+
+      &.active {
+        span {
+          color: #222;
+        }
+        svg {
+          fill: #222;
+        }
+      }
+
+      svg {
+        width: 3em;
+        padding: 0.5em;
+        pointer-events: none;
+        fill: #769709;
+        margin-left: 0.5em;
+      }
+      &:disabled {
+        svg {
+          fill: #aaa;
+        }
+      }
+      span {
+        pointer-events: none;
+        text-align: left;
+      }
+    }
+    padding-bottom: 0rem;
+    &.rounded-ends {
+      .uk-button-default {
+        // &:first-child {
+        //   border-top-left-radius: 16px;
+        //   border-top-right-radius: 16px;
+        // }
+        // &:last-child {
+        //   border-bottom-right-radius: 16px;
+        //   border-bottom-left-radius: 16px;
+        // }
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+      }
+      .uk-button-icon {
+        *:last-child {
+          margin-left: 0.6em;
+        }
+        height: auto;
+        min-width: auto;
+        width: auto;
+      }
+    }
+  }
+
+  &.horizontal {
+    &.uk-margin {
+      .uk-button {
+        margin: 0px;
+      }
+    }
+    .uk-button {
+      background-color: transparent;
+      &:disabled {
+        border: 2px solid;
+        color: #aaa;
+        svg {
+          fill: #aaa;
+        }
+        pointer-events: none;
+      }
+    }
+
+    @each $name, $color in $button-colors {
+      .uk-button-#{$name} {
+        border: 2px $color solid;
+        color: #333;
+        &:hover {
+          background-color: rgba($color, 0.3) !important;
+        }
+      }
+    }
+
+    .uk-button:first-child {
+      border-radius: 10px 0px 0px 10px;
+      border-right-width: 0px;
+    }
+    .uk-button:last-child {
+      border-radius: 0px 10px 10px 0px;
+    }
+    .uk-button:only-child {
+      border-radius: 10px;
+      border-right-width: 2px !important;
+    }
+  }
+
+  padding-bottom: 0.5rem;
+}
+
+.uk-form-icon.icon-svg {
+  top: 1.4em;
+  & > svg {
+    width: 1em;
+    height: 1em;
+  }
+}
+
+.mapboxgl-ctrl-group {
+  button {
+    width: 50px;
+    height: 50px;
+  }
+  &:not(:empty) {
+    box-shadow: 0px 0 10px 5px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #769709;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #769709 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.uk-children-absolute {
+  width: 100%;
+  & > div {
+    position: absolute;
+  }
+}
+
+.wizard-container {
+  width: 100%;
+}
+
+.wizard-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+}

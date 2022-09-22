@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# remove any old nvm and node module folders
+echo -e "\033[1;34m --- Removing Exhisting Node Modules \033[0m"
+rm -r -f node_modules
+echo -e "\033[1;34m --- Removing Exhisting NVM \033[0m"
+rm -r -f $NVM_DIR 
+rm -r -f ~/.nvm
+# download nvm script and output a file called install_nvm.sh
+echo -e "\033[1;34m --- Installing NVM \033[0m"
+curl -sL https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh -o install_nvm.sh
+# the following sets up a path for the nvm command for future shell instances
+bash install_nvm.sh
+# remove the install script
+rm -f install_nvm.sh
+# the following loads the path into this shell instance
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+echo -e "\033[1;34m --- Installing Node Version from .nvrmc \033[0m"
+# use .nvmrc for node version
+nvm use
+# install the specified version of node
+nvm install 
+
+# using the npm package associated with the node version we install with nvm, run npm install.
+echo -e "\033[1;34m --- Installing Node Modules from package.json \033[0m"
+nvm exec npm install
+
+#detect if an .env file exhists, if not create one
+echo -e "\033[1;34m --- Creating .env file if not already present, however you will need to populate some values manually \033[0m"
+test -f .env || cat <<EOT > .env 
+REACT_APP_MAPBOX_API_TOKEN=pk.eyJ1IjoiYWdvb2RuaWdodCIsImEiOiJjbDhhbWhyemcwNm9mM3VtaGRqeGx2ZjZjIn0.VXJ0tUMUZTn4VaufXZ1XQQ
+REACT_APP_SHAPES_ENDPOINT=<api>
+REACT_APP_QUOTE_ENDPOINT=<api>
+REACT_APP_ANSWERS_ENDPOINT=<api>
+REACT_APP_PROXIMITY_LATITUDE=42
+REACT_APP_PROXIMITY_LONGITUDE=-84
+EOT
+echo -e "\033[1;32m --- All Done! **Remember to fill out the .env before running the app. Happy Coding! \033[0m"
+
+
+
