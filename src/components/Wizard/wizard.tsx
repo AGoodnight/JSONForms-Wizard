@@ -1,33 +1,41 @@
-import { ControlElement, Layout } from "@jsonforms/core";
 import { JsonForms } from "@jsonforms/react";
 import { useCallback, useEffect, useState } from "react";
 import Loading from "shared/Loading/Loading";
-import useAnswers, { AnswersResponse } from "hooks/useAnswers";
-import useResolvePayload from "hooks/useResolvePayload";
 import Progress from "shared/Progress/Progress";
 import UKButton from "shared/ukLibrary/ukButton";
 import UKIcon from "shared/ukLibrary/ukIcon";
 import { globalajv, globalRenderer } from "utils/jsonforms";
 import useSteps from "./hooks/useSteps";
 import { useWizardContext } from "./wizard.context";
-import { WizardStep } from "./wizard.models";
-import { useShapesContext } from "components/ArtBoard/shapes.context";
 import {
-  STEP_SCHEMAS,
-  STEP_UI_SCHEMAS,
-} from "screens/MakeAGreetingCard/MakeAGreetingCard.constants";
+  StepsSchema,
+  StepsUISchema,
+  WizardAnswer,
+  WizardStepResult,
+} from "./wizard.models";
 
-const Wizard = () => {
+type WizardProps = React.HTMLAttributes<HTMLDivElement> & {
+  onNext?: (cb?: (answer: WizardAnswer | undefined) => void) => void;
+  onPrevious?: (cb?: (answer: WizardAnswer | undefined) => void) => void;
+  onChange?: (answer: unknown, cb?: () => void) => void;
+  onReset?: (cb?: () => void) => void;
+  error: Error | undefined;
+  navigating?: boolean;
+  schemas: { steps: StepsSchema; ui: StepsUISchema };
+};
+
+const Wizard = ({
+  onNext,
+  onPrevious,
+  onReset,
+  navigating,
+  error,
+  schemas,
+}: WizardProps) => {
   const { dispatch } = useWizardContext();
-  const { dispatch: dispatchOnShapes } = useShapesContext();
-  const [currentAnswer, setCurrentAnswer] = useState<string>();
   const [isValid, setIsValid] = useState<boolean>(false);
-  const { createPayload } = useResolvePayload();
-  const { sendAnswer, error: answersError } = useAnswers();
+
   const {
-    sessionId,
-    currentStep,
-    nextStep,
     hasNext,
     hasPrevious,
     stepsCompleted,
@@ -36,94 +44,64 @@ const Wizard = () => {
     currentStepJSONSchema,
     stepProgress,
     numOfSteps,
-  } = useSteps(STEP_SCHEMAS, STEP_UI_SCHEMAS);
-
-  const [navigating, setNavigating] = useState<boolean>(false);
+  } = useSteps(schemas.steps, schemas.ui);
 
   useEffect(() => {
-    if (answersError) {
-      alert(answersError?.message);
+    if (error) {
+      alert(error.message);
     }
-  }, [answersError]);
+  }, [error]);
 
-  const resetWizard = () => {
-    dispatch({
-      type: "resetWizardProgress",
-    });
-    dispatchOnShapes({
-      type: "nukeAllShapes",
-    });
-  };
-
-  const beforeNext = useCallback(async () => {
-    setNavigating(true);
-    if (nextStep) {
-      // if (nextStep.$id as JsonSchema7 === "map") {
-      // RESET TOOL TO DRAW
-      // }
-    }
-    if (currentStep?.schemaKey) {
-      const _payload = await createPayload({
-        step: currentStep,
-        answers: currentAnswer,
-        uiSchema: currentStepUISchema as Layout & {
-          elements: ControlElement[];
-        },
-        sessionId,
+  const resetWizard = useCallback(() => {
+    onReset?.(() => {
+      dispatch({
+        type: "resetWizardProgress",
       });
-      if (_payload) {
-        sendAnswer(currentStep?.schemaKey as WizardStep, _payload)
-          .then((response: AnswersResponse | undefined) => {
-            switch (response?.schemaKey) {
-              case "map":
-                dispatch({
-                  type: "setSessionId",
-                  value: response.response.id,
-                });
-                break;
-            }
-            dispatch({
-              type: "nextStep",
-              value: currentAnswer,
-            });
-            setNavigating(false);
-          })
-          .catch((e) => {
-            setNavigating(false);
+    });
+  }, [onReset, dispatch]);
+
+  const handleNext = useCallback(() => {
+    onNext?.((result: WizardAnswer | undefined) => {
+      dispatch({
+        type: "nextStep",
+        value: result,
+      });
+    });
+  }, [onNext, dispatch]);
+
+  const handlePrevious = useCallback(async () => {
+    onPrevious
+      ? onPrevious((result: WizardAnswer | undefined) => {
+          dispatch({
+            type: "previousStep",
+            value: result,
           });
-      } else {
-        console.log("no Payload");
-        setNavigating(false);
-      }
-    }
-  }, [
-    sessionId,
-    nextStep,
-    currentStep,
-    currentAnswer,
-    currentStepUISchema,
-    createPayload,
-    dispatch,
-    sendAnswer,
-  ]);
+        })
+      : dispatch({
+          type: "previousStep",
+        });
+  }, [onPrevious, dispatch]);
 
-  const handlePrevious = async () => {
-    dispatch({
-      type: "previousStep",
-      value: currentAnswer,
-    });
-  };
+  const handleChange = useCallback(
+    async (c: any) => {
+      const _data = c.data.default?.length! < 1 ? undefined : c.data.default;
+      delete _data?.extra;
+      console.log(_data);
+      dispatch({
+        type: "setWizardAnswer",
+        value: _data,
+      });
+      const _isValid = globalajv.validate(currentStepJSONSchema, {
+        default: _data,
+      });
+      setIsValid(_isValid);
+    },
+    [setIsValid, currentStepJSONSchema, dispatch]
+  );
 
-  const handleChange = async (c: any) => {
-    const _data = c.data.default?.length! < 1 ? undefined : c.data.default;
-    // extra responses are not validated against the schema, but are retained for submission
-    setCurrentAnswer(c.data.default);
-    delete _data?.extra;
-    const _isValid = globalajv.validate(currentStepJSONSchema, {
-      default: _data,
-    });
-    setIsValid(_isValid);
-  };
+  useEffect(() => {
+    console.log(currentStepData);
+  }, [currentStepData]);
 
   return (
     <div className="uk-children-absolute">
@@ -171,7 +149,7 @@ const Wizard = () => {
               {hasNext && (
                 <UKButton
                   color={!isValid ? "danger" : undefined}
-                  onClick={beforeNext}
+                  onClick={handleNext}
                   disabled={!isValid}
                 >
                   Next

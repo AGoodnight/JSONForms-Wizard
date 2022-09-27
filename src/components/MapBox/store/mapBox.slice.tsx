@@ -4,7 +4,7 @@ import {
   MAP_BOX_INITIAL_CONTEXT,
   MAP_BOX_INITIAL_ZOOM,
 } from "../constants/mapBox.constants";
-import { MapBoxMapLocation, MapBoxState, MapState } from "../mapBox.models";
+import { MapBoxMapLocation, MapBoxState } from "../mapBox.models";
 export const mapBoxSlicer = createSlice({
   name: "mapBox",
   initialState: MAP_BOX_INITIAL_CONTEXT,
@@ -17,10 +17,9 @@ export const mapBoxSlicer = createSlice({
         action.payload.zoom || MAP_BOX_INITIAL_ZOOM
       }`;
       state.mapId = mapId;
-      state.maps[mapId] ??= {} as MapState;
-      state.maps[mapId].latitude = action.payload.latitude;
-      state.maps[mapId].longitude = action.payload.longitude;
-      state.maps[mapId].zoom = action.payload.zoom || MAP_BOX_INITIAL_ZOOM;
+      state.latitude = action.payload.latitude;
+      state.longitude = action.payload.longitude;
+      state.zoom = action.payload.zoom || MAP_BOX_INITIAL_ZOOM;
     },
     setCurrentMapCoordinates: (
       state: MapBoxState,
@@ -39,17 +38,16 @@ export const mapBoxSlicer = createSlice({
       state.cLong = action.payload.longitude;
       state.cZoom = action.payload.zoom || MAP_BOX_INITIAL_ZOOM;
       if (state.mapId) {
-        state.maps[state.mapId].latitude = action.payload.latitude;
-        state.maps[state.mapId].longitude = action.payload.longitude;
-        state.maps[state.mapId].zoom =
-          action.payload.zoom || MAP_BOX_INITIAL_ZOOM;
+        state.latitude = action.payload.latitude;
+        state.longitude = action.payload.longitude;
+        state.zoom = action.payload.zoom || MAP_BOX_INITIAL_ZOOM;
       }
     },
     syncCoordinates: (state: MapBoxState) => {
       if (state.mapId) {
-        state.cLat = state.maps[state.mapId].latitude;
-        state.cLong = state.maps[state.mapId].longitude;
-        state.cZoom = state.maps[state.mapId].zoom;
+        state.cLat = state.latitude;
+        state.cLong = state.longitude;
+        state.cZoom = state.zoom;
       }
     },
     updateFeatures: (
@@ -57,7 +55,7 @@ export const mapBoxSlicer = createSlice({
       action: PayloadAction<FeatureCollection>
     ) => {
       if (state.mapId) {
-        state.maps[state.mapId].features = action.payload;
+        state.features = action.payload;
       }
       state.status = "syncingFeatures";
     },

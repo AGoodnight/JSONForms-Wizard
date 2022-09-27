@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import AppStore from "./store/app.store";
 import { ArtBoardProvider } from "components/ArtBoard/artboard.context";
 import { ShapesProvider } from "components/ArtBoard/shapes.context";
+import MakeAGreetingCard from "screens/MakeAGreetingCard/MakeAGreetingCard";
 
 function Hack() {
   return (
@@ -22,17 +23,9 @@ function Hack() {
           path={ROUTES.wizard}
           element={
             <WizardProvider>
-              <KeyboardEventsProvider>
-                <ToolBarProvider>
-                  <ShapesProvider>
-                    <ArtBoardProvider>
-                      <Provider store={AppStore}>
-                        <Wizard />
-                      </Provider>
-                    </ArtBoardProvider>
-                  </ShapesProvider>
-                </ToolBarProvider>
-              </KeyboardEventsProvider>
+              <Provider store={AppStore}>
+                <MakeAGreetingCard />
+              </Provider>
             </WizardProvider>
           }
         />

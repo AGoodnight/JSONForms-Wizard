@@ -1,13 +1,11 @@
 import { ControlProps } from "@jsonforms/core";
 import { withJsonFormsControlProps } from "@jsonforms/react";
-import { MutableRefObject, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import MapInstance from "../components/mapBox";
 import { MapBoxMapLocation } from "../mapBox.models";
 import { DRAWN_BLOB_ID } from "components/ArtBoard/shapes.constants";
 import { MapToolBar } from "components/ToolBar/mapToolBar";
 import { useAppSelector } from "store/app_store.hook";
-import { useCallback } from "react";
-import mapboxgl from "mapbox-gl";
 
 type MapRendererProps = ControlProps & {
   data: any;

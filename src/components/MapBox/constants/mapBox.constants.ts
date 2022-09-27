@@ -11,7 +11,10 @@ export const MAP_BOX_INITIAL_CONTEXT: MapBoxState = {
   cZoom: 20,
   disabled: false,
   status: "uninitialized",
-  maps: {},
+  latitude: null,
+  longitude: null,
+  zoom: null,
+  features: undefined,
 };
 
 export const MAP_BOX_DRAW_STYLES_BW = [

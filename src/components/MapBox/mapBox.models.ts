@@ -3,7 +3,7 @@ import { FeatureCollection } from "geojson";
 export type MapBoxMapLocation = {
   latitude: number | null;
   longitude: number | null;
-  zoom?: number;
+  zoom?: number | null;
 };
 
 export type MapBoxState = {
@@ -13,14 +13,12 @@ export type MapBoxState = {
   cZoom: number | null;
   disabled: boolean;
   status: MapBoxStatus;
-  maps: Record<string, MapState>;
-};
+} & MapState;
 
 export type MapState = {
-  id: string;
   latitude: number | null;
   longitude: number | null;
-  zoom: number;
+  zoom: number | null;
   features: FeatureCollection | undefined;
 };
 

@@ -6,9 +6,9 @@ export const selectSavedCoordinates = (
   mapId: string
 ): MapBoxMapLocation => {
   return {
-    longitude: state.maps[mapId].longitude,
-    latitude: state.maps[mapId].latitude,
-    zoom: state.maps[mapId].zoom,
+    longitude: state.longitude,
+    latitude: state.latitude,
+    zoom: state.zoom,
   };
 };
 
@@ -23,5 +23,5 @@ export const selectCurrentCoordinates = (
 };
 
 export const selectFeatures = (state: MapBoxState, mapId: string) =>
-  state.maps[mapId].features;
+  state.features;
 export const selectStatus = (state: MapBoxState) => state.status;

@@ -20,48 +20,7 @@ type TextFieldRendererProps = ControlProps & {
 
 const TextFieldRenderer = (props: TextFieldRendererProps) => {
   const { locationsFromAddress } = useMapBox();
-  // const { dispatch } = useMapBoxContext();
   const dispatch = useAppDispatch();
-
-  // const useCustom = false;
-
-  // const requiredField = props.rootSchema.required?.includes(props.path);
-
-  // const handleSelectFromQueryList = useCallback(
-  //   (ev: any) => {
-  //     console.log(ev);
-  //     const matchingLocation = locationQuery?.filter(
-  //       (location: GeocodeFeature) => {
-  //         return location.place_name === ev.target.dataset.placename;
-  //       }
-  //     )[0];
-  //     console.log(matchingLocation);
-  //     if (matchingLocation) {
-  //       const _coordinatesAsLocation: MapBoxMapLocation = {
-  //         latitude: matchingLocation.center[1],
-  //         longitude: matchingLocation.center[0],
-  //         zoom: 20,
-  //       };
-  //       dispatch({
-  //         type: "setAllCoordinates",
-  //         value: _coordinatesAsLocation,
-  //       });
-  //       setLocationQuery(undefined);
-  //       props.handleChange(props.path, String(ev.target.dataset.placename));
-  //     }
-  //   },
-  //   [locationQuery, props, dispatch]
-  // );
-
-  // const handleKeyUp = (ev: any) => {
-  //   if (ev.key === "Enter") {
-  //     if (!locationQuery) {
-  //       runSearch(ev.target.value);
-  //     } else {
-  //       setLocationQuery(undefined);
-  //     }
-  //   }
-  // };
 
   const reportValue = useCallback(
     (value: any) => {
@@ -97,42 +56,6 @@ const TextFieldRenderer = (props: TextFieldRendererProps) => {
     runSearch(ev.target.value);
   };
 
-  // useEffect(() => {
-  //   if (pristine) {
-  //     return;
-  //   }
-
-  //   if (props.errors) {
-  //     const propSchema = props.rootSchema.properties?.[
-  //       props.path
-  //     ] as JsonSchema7;
-  //     setError([
-  //       {
-  //         severity: "danger",
-  //         message: propSchema.errorMessage || props.errors,
-  //         error: "default",
-  //       },
-  //     ]);
-  //   } else if (requiredField && props.data.length < 1) {
-  //     setError([
-  //       {
-  //         severity: "danger",
-  //         message: "is a required property",
-  //         error: "default",
-  //       },
-  //     ]);
-  //   } else {
-  //     setError(undefined);
-  //   }
-  // }, [
-  //   props.path,
-  //   props.errors,
-  //   props.rootSchema,
-  //   props.data,
-  //   requiredField,
-  //   pristine,
-  // ]);
-
   return (
     <div className="uk-form-controls">
       <h3>{props.schema.title}</h3>
@@ -158,42 +81,6 @@ const TextFieldRenderer = (props: TextFieldRendererProps) => {
           />
         </div>
       </AddressAutofill>
-      {/* </div> */}
-      {/* {useCustom && (
-        <UKTextField
-          className="uk-menu-input"
-          errors={error}
-          required={requiredField}
-          value={props.data}
-          onKeyUp={handleKeyUp}
-          onChange={handleChange}
-        />
-      )}
-      {useCustom && locationQuery && (
-        <div className="uk-card uk-card-menu uk-card-default">
-          <ul
-            ref={queryMenu}
-            tabIndex={0}
-            className="uk-list uk-list-collapse uk-list-divider "
-          >
-            {locationQuery?.map((location: GeocodeFeature, index: number) => {
-              return (
-                <li tabIndex={-1} key={`address-${index}`}>
-                  <UKButton
-                    tabIndex={0}
-                    variant="menu"
-                    data-placename={location.place_name}
-                    type="button"
-                    onClick={handleSelectFromQueryList}
-                  >
-                    {location.place_name}
-                  </UKButton>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )} */}
     </div>
   );
 };

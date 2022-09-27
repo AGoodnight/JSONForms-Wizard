@@ -32,11 +32,11 @@ const useSteps = (schema: StepsSchema, uiSchema: StepsUISchema) => {
 
   const stepsCompleted: number = useMemo(() => {
     return (
-      Object.keys(state?.answers!)?.filter((key: string) => {
-        return !!state?.answers?.[key as WizardStep];
+      Object.keys(state?.stepAnswers!)?.filter((key: string) => {
+        return !!state?.stepAnswers?.[key as WizardStep];
       }).length || 0
     );
-  }, [state.answers]);
+  }, [state.stepAnswers]);
 
   const currentStepJSONSchema: JsonSchema = useMemo(() => {
     const _schema: JsonSchema =
@@ -51,21 +51,33 @@ const useSteps = (schema: StepsSchema, uiSchema: StepsUISchema) => {
   }, [state.currentStep, uiSchema]);
 
   const currentStepData: { default: unknown } = useMemo(() => {
+    console.log(state.answer);
+    if (state.answer) {
+      return { default: state.answer };
+    }
     const stepSchemaKey: WizardStep = state.currentStep
       ?.schemaKey as WizardStep;
     return stepSchemaKey
-      ? { default: state.answers?.[stepSchemaKey] }
+      ? { default: state.stepAnswers?.[stepSchemaKey] }
+      : { default: undefined };
+  }, [state.answer, state.stepAnswers, state.currentStep]);
+
+  const currentStepState: { default: unknown } = useMemo(() => {
+    const stepSchemaKey: WizardStep = state.currentStep
+      ?.schemaKey as WizardStep;
+    return stepSchemaKey
+      ? { default: state.stepStates?.[stepSchemaKey] }
       : { default: undefined };
   }, [state]);
 
   const stepProgress = useMemo(() => {
     const completed: number =
-      Object.keys(state?.answers!)?.filter((key: string) => {
-        return !!state?.answers?.[key as WizardStep];
+      Object.keys(state?.stepAnswers!)?.filter((key: string) => {
+        return !!state?.stepAnswers?.[key as WizardStep];
       }).length || 0;
     const progress = completed / Object.keys(uiSchema).length;
     return progress * 100;
-  }, [state.answers, uiSchema]);
+  }, [state.stepAnswers, uiSchema]);
 
   const numOfSteps = useMemo(() => {
     return uiSchema.length;
@@ -84,6 +96,7 @@ const useSteps = (schema: StepsSchema, uiSchema: StepsUISchema) => {
     stepsCompleted,
     stepProgress,
     numOfSteps,
+    currentStepState,
   };
 };
 

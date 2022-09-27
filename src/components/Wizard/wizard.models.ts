@@ -1,5 +1,4 @@
 import { ControlElement, JsonSchema, Layout } from "@jsonforms/core";
-import { Shape } from "konva/lib/Shape";
 
 export const ScopeKeyStrings = [
   "address",
@@ -37,13 +36,7 @@ export type WizardQuoteStepValue = {
   extra?: string;
 };
 
-export type WizardStepValue =
-  | string
-  | WizardPropertyStepValue
-  | WizardQuoteStepValue
-  | { value: string; label: string }
-  | Shape[];
-
+export type WizardStepValue = unknown;
 export type WizardStep =
   | "address"
   | "map"
@@ -53,12 +46,13 @@ export type WizardStep =
   | "notes"
   | "quality"
   | "quote";
-export type WizardAnswers = Record<WizardStep, any>;
 
-export type WizardValueType =
-  | string
-  | WizardStepDefinition
-  | Record<string, unknown>;
+export type WizardStepResults = Record<WizardStep, WizardStepResult>;
+export type WizardStepResult = { answer: WizardAnswer; state: unknown };
+export type WizardAnswer = unknown;
+export type WizardStates = Record<WizardStep, WizardState>;
+
+export type WizardValueType = unknown;
 export type WizardAction = {
   type: WizardActionTypes;
   value?: WizardValueType;
@@ -68,7 +62,8 @@ export type WizardActionTypes =
   | "setSteps"
   | "nextStep"
   | "previousStep"
-  | "setAnswer"
+  | "setWizardState"
+  | "setWizardAnswer"
   | "resetWizardProgress"
   | "setSessionId"
   | "setQuote"
@@ -78,7 +73,11 @@ export type WizardState = {
   sessionId: string | null;
   completedSteps: WizardStep[];
   currentStep: WizardStepDefinition | undefined;
-  answers: Record<WizardStep, WizardStepValue> | undefined;
+  currentState: unknown | undefined;
+  answer: WizardStepResult | undefined;
+  stepAnswers: WizardStepResults;
+  stepStates: WizardStates;
+  sessions: Record<string, WizardState>;
 };
 export type WizardDispatch = (action: WizardAction) => void;
 export type WizardRedux = {
@@ -87,4 +86,5 @@ export type WizardRedux = {
 };
 
 export type StepsSchema = JsonSchema[];
-export type StepsUISchema = Layout[] & { elements: ControlElement[] }[];
+export type StepUISchema = Layout & { elements: ControlElement[] };
+export type StepsUISchema = StepUISchema[];

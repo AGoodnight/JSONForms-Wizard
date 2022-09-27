@@ -7,7 +7,7 @@ import useFileReader from "hooks/useFileReader";
 import {
   WizardPropertyStepValue,
   WizardStepDefinition,
-  WizardStepValue,
+  WizardStepResult,
 } from "components/Wizard/wizard.models";
 import { ValuePayload, WizardPayload } from "models/api.model";
 
@@ -20,7 +20,7 @@ const useResolvePayload = () => {
     async (config: {
       step: WizardStepDefinition | undefined;
       uiSchema: Layout & { elements: ControlElement[] };
-      answers: WizardStepValue | undefined;
+      result: WizardStepResult;
       sessionId?: string | null;
     }): Promise<WizardPayload | undefined | null> => {
       switch (config.step?.schemaKey) {
@@ -36,8 +36,8 @@ const useResolvePayload = () => {
               finalizedImage?.blob
             );
 
-            const value: WizardStepValue | undefined =
-              config.answers as WizardPropertyStepValue;
+            const value: WizardPropertyStepValue | undefined = config.result
+              ?.answer as WizardPropertyStepValue;
 
             const _payload = {
               latitude: value?.latitude,
@@ -50,12 +50,13 @@ const useResolvePayload = () => {
             setPayload(_payload);
             return _payload;
           } else {
-            const _payload = (config.answers as ValuePayload) || undefined;
+            const _payload =
+              (config.result.answer as ValuePayload) || undefined;
             setPayload(_payload);
             return _payload;
           }
         default:
-          const _payload = (config.answers as ValuePayload) || undefined;
+          const _payload = (config.result?.answer as ValuePayload) || undefined;
           setPayload(_payload);
           return _payload;
       }

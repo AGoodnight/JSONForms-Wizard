@@ -6,7 +6,7 @@ import {
   useReducer,
 } from "react";
 import {
-  WizardAnswers,
+  WizardStepResults,
   WizardState,
   WizardStep,
 } from "../../components/Wizard/wizard.models";
@@ -23,13 +23,13 @@ const getLocalServiceSignUpState = () => {
 };
 
 const getWizardAnswer = (
-  answers: WizardAnswers = {} as WizardAnswers,
+  results: WizardStepResults = {} as WizardStepResults,
   key: WizardStep
 ) => {
-  return answers[key] ? answers[key] : null;
+  return results?.[key]?.answer ? results[key].answer : null;
 };
 
-const getWizardAnswers = () => getLocalWizardStateValue("answers");
+const getWizardAnswers = () => getLocalWizardStateValue("stepAnswers");
 
 const getLocalWizardStateValue = (key: string) => {
   const localWizardState = localStorage.getItem("wizardState");
@@ -42,9 +42,9 @@ const getLocalWizardStateValue = (key: string) => {
 const EMPTY_STATE: Partial<WizardState> = {};
 
 const INITIAL_STATE: ServiceSignUpState = {
-  quote: getWizardAnswer(getWizardAnswers(), "quote"),
+  quote: String(getWizardAnswer(getWizardAnswers(), "quote")),
   wizardSessionId: null,
-  address: getWizardAnswer(getWizardAnswers(), "address"),
+  address: String(getWizardAnswer(getWizardAnswers(), "address")),
 };
 
 const wizardReducer = (

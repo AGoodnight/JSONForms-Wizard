@@ -9,11 +9,12 @@ import {
 import { STEP_SCHEMAS } from "../../screens/MakeAGreetingCard/MakeAGreetingCard.constants";
 import {
   WizardAction,
-  WizardAnswers,
+  WizardStepResults,
   WizardRedux,
   WizardState,
   WizardStep,
   WizardStepDefinition,
+  WizardStates,
 } from "./wizard.models";
 
 const resolveProps = (index: number) => {
@@ -48,20 +49,28 @@ export const STARTING_STEP_SCHEMA_$ID: string = "address";
 export const STARTING_STEP =
   asStepDef(0, {
     sessionId: null,
-    answers: {} as WizardAnswers,
+    stepAnswers: {} as WizardStepResults,
+    stepStates: {} as WizardStates,
     completedSteps: [],
+    currentState: undefined,
+    answer: undefined,
     currentStep: {
       schemaKey: STARTING_STEP_SCHEMA_$ID,
       index: STARTING_STEP_INDEX,
       complete: false,
     },
+    sessions: {},
   }) || ({} as WizardStepDefinition);
 
 export const WIZARD_INITIAL_STATE: WizardState = {
   sessionId: null,
   currentStep: STARTING_STEP,
   completedSteps: [],
-  answers: {} as WizardAnswers,
+  currentState: undefined,
+  answer: undefined,
+  stepStates: {} as WizardStates,
+  stepAnswers: {} as WizardStepResults,
+  sessions: {},
 };
 
 const wizardReducer = (state: WizardState, action: WizardAction) => {
@@ -72,12 +81,13 @@ const wizardReducer = (state: WizardState, action: WizardAction) => {
   switch (action.type) {
     case "nextStep":
       if (_cIndex > -1 && _cKey && resolveProps(_cIndex)) {
-        const currentAnswers = _state.answers;
+        const currentAnswers = _state.stepAnswers;
         const _nextStep = asStepDef(_cIndex + 1, _state) || STARTING_STEP;
 
         return Object.assign({}, _state, {
           currentStep: _nextStep,
-          answers: Object.assign({}, currentAnswers, {
+          answer: undefined,
+          stepAnswers: Object.assign({}, currentAnswers, {
             [_cKey]: action.value,
           }),
           complete: !!action.value,
@@ -88,12 +98,13 @@ const wizardReducer = (state: WizardState, action: WizardAction) => {
 
     case "previousStep":
       if (_cIndex > 0 && _cKey && resolveProps(_cIndex)) {
-        const currentAnswers = _state.answers;
+        const currentAnswers = _state.stepAnswers;
         const _previousStep = asStepDef(_cIndex - 1, _state) || STARTING_STEP;
 
         return Object.assign({}, _state, {
           currentStep: _previousStep,
-          answers: Object.assign({}, currentAnswers, {
+          answer: undefined,
+          stepAnswers: Object.assign({}, currentAnswers, {
             [_cKey]: action.value,
           }),
           complete: !!action.value,
@@ -108,15 +119,28 @@ const wizardReducer = (state: WizardState, action: WizardAction) => {
         currentStep: STARTING_STEP,
       });
 
-    case "setAnswer":
-      if (_state.currentStep?.schemaKey) {
-        const currentAnswers = _state.answers;
+    case "setWizardAnswer":
+      if (action.value) {
         return Object.assign({}, _state, {
-          answers: Object.assign({}, currentAnswers, {
-            [_state.currentStep?.schemaKey]: action.value,
-          }),
-          complete: !!action.value,
+          answer: action.value,
         });
+      } else {
+        return _state;
+      }
+
+    case "setWizardState":
+      if (action.value) {
+        const payload = action.value as { value: unknown; key: WizardStep };
+        const currentResults = _state.stepAnswers;
+        console.log(currentResults, payload.value);
+        return Object.assign({}, _state, {
+          stepStates: Object.assign({}, currentResults, {
+            [payload.key]: payload.value,
+          }),
+          complete: !!payload.value,
+        });
+
+        // return _state;
       } else {
         return _state;
       }
