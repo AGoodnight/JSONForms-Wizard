@@ -12,35 +12,30 @@ import { Provider } from "react-redux";
 import AppStore from "./store/app.store";
 import { ArtBoardProvider } from "components/ArtBoard/artboard.context";
 import { ShapesProvider } from "components/ArtBoard/shapes.context";
-import MakeAGreetingCard from "screens/MakeAGreetingCard/MakeAGreetingCard";
+import MakeAGreetingCard from "screens/WizardSessions/MakeAGreetingCard/MakeAGreetingCard";
 
 function Hack() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<GetStarted />} />
-        <Route
-          path={ROUTES.wizard}
-          element={
-            <WizardProvider>
-              <Provider store={AppStore}>
-                <MakeAGreetingCard />
-              </Provider>
-            </WizardProvider>
-          }
-        />
-        <Route
-          path={`${ROUTES.signUp}/:id`}
-          element={
-            <WizardProvider>
-              <ServiceSignUpProvider>
-                <ServiceSignUp />
-              </ServiceSignUpProvider>
-            </WizardProvider>
-          }
-        />
-      </Route>
-    </Routes>
+    <Provider store={AppStore}>
+      <WizardProvider>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<GetStarted />} />
+            <Route path={ROUTES.wizard} element={<MakeAGreetingCard />} />
+            <Route
+              path={`${ROUTES.signUp}/:id`}
+              element={
+                <WizardProvider>
+                  <ServiceSignUpProvider>
+                    <ServiceSignUp />
+                  </ServiceSignUpProvider>
+                </WizardProvider>
+              }
+            />
+          </Route>
+        </Routes>
+      </WizardProvider>
+    </Provider>
   );
 }
 

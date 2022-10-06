@@ -6,7 +6,7 @@ import { MapBoxMapLocation } from "components/MapBox/mapBox.models";
 import { GeocodeFeature } from "@mapbox/mapbox-sdk/services/geocoding";
 import { AddressAutofill } from "@mapbox/search-js-react";
 import ENV from "components/MapBox/mapBoxEnv";
-import { useAppDispatch } from "store/app_store.hook";
+import { useMapBoxDispatch } from "components/MapBox/store/mapBox.hook";
 import {
   setAddressCoordinates,
   setAllCoordinates,
@@ -20,7 +20,7 @@ type TextFieldRendererProps = ControlProps & {
 
 const TextFieldRenderer = (props: TextFieldRendererProps) => {
   const { locationsFromAddress } = useMapBox();
-  const dispatch = useAppDispatch();
+  const dispatch = useMapBoxDispatch();
 
   const reportValue = useCallback(
     (value: any) => {

@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import mapBoxReducer from "components/MapBox/store/mapBox.slice";
+import wizardSessionsReducer from "screens/WizardSessions/store/wizardSessions.slice";
 
 const localState = localStorage.getItem("reduxState");
 const persistedState = localState ? JSON.parse(localState) : {};
@@ -12,6 +13,7 @@ export type GlobalAppState = ReturnType<typeof store.getState>;
 const store = configureStore({
   reducer: {
     mapBox: mapBoxReducer,
+    wizardSessions: wizardSessionsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(localStorageMiddleware),

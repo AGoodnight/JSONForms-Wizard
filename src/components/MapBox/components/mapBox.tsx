@@ -22,7 +22,9 @@ import { AppDispatch } from "store/app.store";
 import {} from "../store/mapBox.selectors";
 
 import blobStorage from "blobStorage";
-import useReduxStore, { useAppDispatch } from "store/app_store.hook";
+import useMapBoxStore, {
+  useMapBoxDispatch,
+} from "components/MapBox/store/mapBox.hook";
 import useToolBar from "components/ToolBar/useToolBar";
 import { MAP_TOOLBAR } from "components/ToolBar/toolbar.constants";
 import { MapToolDefintions } from "components/ToolBar/toolbar.models";
@@ -53,7 +55,7 @@ const MapInstance: React.FC<MapInstanceProps> = ({
   blobFormat = "image/jpeg",
   ...rest
 }) => {
-  const dispatchToStore: AppDispatch = useAppDispatch();
+  const dispatchToStore: AppDispatch = useMapBoxDispatch();
   const mapContainer = useRef<any>();
   const drawRef = useRef<MapboxDraw>();
   const map = useRef<mapboxgl.Map>();
@@ -78,7 +80,7 @@ const MapInstance: React.FC<MapInstanceProps> = ({
     currentFeatures: featuresFromStore,
     currentStatus,
     savedCoordinates,
-  } = useReduxStore();
+  } = useMapBoxStore();
 
   const currentFeatures: FeatureCollection | undefined = useMemo(
     () => (featuresFromStore ? stripBadFeatures(featuresFromStore) : undefined),

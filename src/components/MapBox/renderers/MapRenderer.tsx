@@ -5,7 +5,7 @@ import MapInstance from "../components/mapBox";
 import { MapBoxMapLocation } from "../mapBox.models";
 import { DRAWN_BLOB_ID } from "components/ArtBoard/shapes.constants";
 import { MapToolBar } from "components/ToolBar/mapToolBar";
-import { useAppSelector } from "store/app_store.hook";
+import { useMapBoxSelector } from "components/MapBox/store/mapBox.hook";
 
 type MapRendererProps = ControlProps & {
   data: any;
@@ -14,7 +14,7 @@ type MapRendererProps = ControlProps & {
 };
 
 const MapRenderer = (props: MapRendererProps) => {
-  const mapState = useAppSelector((state) => {
+  const mapState = useMapBoxSelector((state) => {
     return state.mapBox;
   });
 

@@ -6,7 +6,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { STEP_SCHEMAS } from "../../screens/MakeAGreetingCard/MakeAGreetingCard.constants";
+import { STEP_SCHEMAS } from "../../screens/WizardSessions/MakeAGreetingCard/MakeAGreetingCard.constants";
 import {
   WizardAction,
   WizardStepResults,
@@ -154,6 +154,18 @@ const wizardReducer = (state: WizardState, action: WizardAction) => {
       return Object.assign({}, _state, {
         quote: action.value,
       });
+
+    case "setSession":
+      const _value = action.value as WizardState;
+      if (_value.sessionId) {
+        return Object.assign({}, _state, {
+          sessions: Object.assign({}, _state.sessions, {
+            [_value.sessionId]: _value,
+          }),
+        });
+      } else {
+        return _state;
+      }
 
     default:
       return state;

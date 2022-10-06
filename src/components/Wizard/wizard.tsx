@@ -11,13 +11,14 @@ import {
   StepsSchema,
   StepsUISchema,
   WizardAnswer,
-  WizardStepResult,
+  WizardState,
 } from "./wizard.models";
 
-type WizardProps = React.HTMLAttributes<HTMLDivElement> & {
+type WizardProps = {
+  sessionId: string;
   onNext?: (cb?: (answer: WizardAnswer | undefined) => void) => void;
   onPrevious?: (cb?: (answer: WizardAnswer | undefined) => void) => void;
-  onChange?: (answer: unknown, cb?: () => void) => void;
+  onChange?: (session: WizardState, cb?: () => void) => void;
   onReset?: (cb?: () => void) => void;
   error: Error | undefined;
   navigating?: boolean;
@@ -25,8 +26,10 @@ type WizardProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 const Wizard = ({
+  sessionId,
   onNext,
   onPrevious,
+  onChange,
   onReset,
   navigating,
   error,
@@ -44,7 +47,8 @@ const Wizard = ({
     currentStepJSONSchema,
     stepProgress,
     numOfSteps,
-  } = useSteps(schemas.steps, schemas.ui);
+    currentSession,
+  } = useSteps(sessionId, schemas.steps, schemas.ui);
 
   useEffect(() => {
     if (error) {
@@ -86,7 +90,6 @@ const Wizard = ({
     async (c: any) => {
       const _data = c.data.default?.length! < 1 ? undefined : c.data.default;
       delete _data?.extra;
-      console.log(_data);
       dispatch({
         type: "setWizardAnswer",
         value: _data,
@@ -100,8 +103,8 @@ const Wizard = ({
   );
 
   useEffect(() => {
-    console.log(currentStepData);
-  }, [currentStepData]);
+    onChange?.(currentSession);
+  }, [currentSession, onChange]);
 
   return (
     <div className="uk-children-absolute">

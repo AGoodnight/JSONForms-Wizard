@@ -67,6 +67,7 @@ export type WizardActionTypes =
   | "resetWizardProgress"
   | "setSessionId"
   | "setQuote"
+  | "setSession"
   | "handleNextAsync";
 
 export type WizardState = {

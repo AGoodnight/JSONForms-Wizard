@@ -1,10 +1,25 @@
 import { STARTING_STEP, useWizardContext } from "../wizard.context";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { StepsSchema, StepsUISchema, WizardStep } from "../wizard.models";
 import { JsonSchema, UISchemaElement } from "@jsonforms/core";
+import { useWizardSessionsSelector } from "screens/WizardSessions/store/wizardSessions.hook";
 
-const useSteps = (schema: StepsSchema, uiSchema: StepsUISchema) => {
-  const { state } = useWizardContext();
+const useSteps = (
+  thisSessionId: string,
+  schema: StepsSchema,
+  uiSchema: StepsUISchema
+) => {
+  const { state, dispatch } = useWizardContext();
+  const sessionsState = useWizardSessionsSelector(
+    (state) => state.wizardSessions
+  );
+
+  useEffect(() => {
+    dispatch({
+      type: "setWizardState",
+      value: sessionsState.sessions[thisSessionId],
+    });
+  }, []);
 
   const sessionId: string | null = useMemo(() => {
     return state.sessionId;
@@ -68,7 +83,7 @@ const useSteps = (schema: StepsSchema, uiSchema: StepsUISchema) => {
     return stepSchemaKey
       ? { default: state.stepStates?.[stepSchemaKey] }
       : { default: undefined };
-  }, [state]);
+  }, [state.stepStates, state.currentStep?.schemaKey]);
 
   const stepProgress = useMemo(() => {
     const completed: number =
@@ -97,6 +112,7 @@ const useSteps = (schema: StepsSchema, uiSchema: StepsUISchema) => {
     stepProgress,
     numOfSteps,
     currentStepState,
+    currentSession: state,
   };
 };
 

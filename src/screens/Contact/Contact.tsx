@@ -7,7 +7,7 @@ import Progress from "shared/Progress/Progress";
 import UKAlert from "shared/ukLibrary/ukAlert";
 import UKButton from "shared/ukLibrary/ukButton";
 import { ROUTES } from "constants/routes.constants";
-import { STEP_UI_SCHEMAS } from "screens/MakeAGreetingCard/MakeAGreetingCard.constants";
+import { STEP_UI_SCHEMAS } from "screens/WizardSessions/MakeAGreetingCard/MakeAGreetingCard.constants";
 import { useServiceSignUpContext } from "screens/Contact/Contact.context";
 
 const ServiceSignUp = () => {

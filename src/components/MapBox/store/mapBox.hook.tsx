@@ -6,7 +6,7 @@ import {
 } from "components/MapBox/store/mapBox.selectors";
 import { useMemo } from "react";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import type { GlobalAppState, AppDispatch } from "./app.store";
+import type { GlobalAppState, AppDispatch } from "store/app.store";
 import { FeatureCollection } from "geojson";
 import {
   MapBoxMapLocation,
@@ -14,39 +14,35 @@ import {
 } from "components/MapBox/mapBox.models";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
-export const useAppDispatch: () => AppDispatch = useDispatch;
-export const useAppSelector: TypedUseSelectorHook<GlobalAppState> = useSelector;
+export const useMapBoxDispatch: () => AppDispatch = useDispatch;
+export const useMapBoxSelector: TypedUseSelectorHook<GlobalAppState> =
+  useSelector;
 
-const useReduxStore = () => {
-  const mapBoxState = useAppSelector((state: GlobalAppState) => {
+const useMapBoxStore = () => {
+  const state = useMapBoxSelector((state: GlobalAppState) => {
     return state.mapBox;
   });
 
   const currentCoordinates: MapBoxMapLocation = useMemo(
-    () => selectCurrentCoordinates(mapBoxState),
-    [mapBoxState]
+    () => selectCurrentCoordinates(state),
+    [state]
   );
   const savedCoordinates: MapBoxMapLocation | undefined = useMemo(
     () =>
-      mapBoxState.mapId
-        ? selectSavedCoordinates(mapBoxState, mapBoxState.mapId)
-        : undefined,
-    [mapBoxState]
+      state.mapId ? selectSavedCoordinates(state, state.mapId) : undefined,
+    [state]
   );
   const currentStatus: MapBoxStatus = useMemo(
-    () => selectStatus(mapBoxState),
-    [mapBoxState]
+    () => selectStatus(state),
+    [state]
   );
   const currentFeatures: FeatureCollection | undefined = useMemo(
-    () =>
-      mapBoxState.mapId
-        ? selectFeatures(mapBoxState, mapBoxState.mapId)
-        : undefined,
-    [mapBoxState]
+    () => (state.mapId ? selectFeatures(state, state.mapId) : undefined),
+    [state]
   );
 
   return {
-    mapBoxState,
+    state,
     currentCoordinates,
     currentStatus,
     currentFeatures,
@@ -54,4 +50,4 @@ const useReduxStore = () => {
   };
 };
 
-export default useReduxStore;
+export default useMapBoxStore;

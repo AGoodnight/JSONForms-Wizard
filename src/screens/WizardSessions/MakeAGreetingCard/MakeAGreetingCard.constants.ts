@@ -1,7 +1,7 @@
 import {
   StepsSchema,
   StepsUISchema,
-} from "../../components/Wizard/wizard.models";
+} from "../../../components/Wizard/wizard.models";
 
 export const STEP_UI_SCHEMAS: StepsUISchema = [
   {

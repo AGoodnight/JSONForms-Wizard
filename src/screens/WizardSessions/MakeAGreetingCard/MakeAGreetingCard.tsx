@@ -6,29 +6,45 @@ import useSteps from "components/Wizard/hooks/useSteps";
 import { useWizardContext } from "components/Wizard/wizard.context";
 import {
   StepUISchema,
-  WizardAnswer,
+  WizardState,
   WizardStep,
   WizardStepResult,
 } from "components/Wizard/wizard.models";
 import useAnswers, { AnswersResponse } from "hooks/useAnswers";
 import useResolvePayload from "hooks/useResolvePayload";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { GlobalAppState } from "store/app.store";
-import { useAppSelector } from "store/app_store.hook";
+import { useMapBoxSelector } from "components/MapBox/store/mapBox.hook";
+import {
+  useWizardSessionsSelector,
+  useWizardSessionsDispatch,
+} from "screens/WizardSessions/store/wizardSessions.hook";
 import { KeyboardEventsProvider } from "store/keyBoard.context";
 import { STEP_SCHEMAS, STEP_UI_SCHEMAS } from "./MakeAGreetingCard.constants";
+import { setSession } from "../store/wizardSessions.slice";
 
 const MakeAGreetingCard = () => {
   const { state, dispatch } = useWizardContext();
-  const mapBoxState = useAppSelector((state: GlobalAppState) => state.mapBox);
+  const mapBoxState = useMapBoxSelector(
+    (state: GlobalAppState) => state.mapBox
+  );
+  const dispatchToSessions = useWizardSessionsDispatch();
 
   const [navigating, setNavigating] = useState<boolean>(false);
   const { createPayload } = useResolvePayload();
   const { sendAnswer, error: answersError } = useAnswers();
 
   const { sessionId, currentStep, currentStepUISchema } = useSteps(
+    "greetingCard",
     STEP_SCHEMAS,
     STEP_UI_SCHEMAS
+  );
+
+  const handleWizardChange = useCallback(
+    (session: WizardState) => {
+      dispatchToSessions(setSession({ id: "greetingCard", state: session }));
+    },
+    [dispatchToSessions]
   );
 
   const beforeNext = useCallback(
@@ -98,7 +114,9 @@ const MakeAGreetingCard = () => {
         <ShapesProvider>
           <ArtBoardProvider>
             <Wizard
+              sessionId="greetingCard"
               onNext={beforeNext}
+              onChange={handleWizardChange}
               navigating={navigating}
               error={answersError}
               schemas={{ steps: STEP_SCHEMAS, ui: STEP_UI_SCHEMAS }}
